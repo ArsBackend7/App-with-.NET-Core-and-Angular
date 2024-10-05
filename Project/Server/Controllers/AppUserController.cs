@@ -17,38 +17,33 @@ public class AppUserController : ControllerBase
     }
 
     [HttpGet]
-    [Route("get-app-users", Name = "GetAllAppUsers")]
+    [Route("get-app-users")]
     public async Task<IActionResult> GetAppUsers()
     {
-        var users = await _context.AppUsers.ToListAsync();
+        List<AppUser> users = await _context.AppUsers.ToListAsync();
         return Ok(users);
     }
 
     [HttpGet]
-    [Route("get-app-user", Name = "GetAppUserById")]
+    [Route("get-app-user")]
     public async Task<IActionResult> GetAppUser(int appUserId)
     {
-        var appUser = await _context.AppUsers.FindAsync(appUserId);
+        AppUser? appUser = await _context.AppUsers.FindAsync(appUserId);
 
-        if (appUser == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(appUser);
+        return appUser == null ? NotFound() : Ok(appUser);
     }
 
     [HttpPost]
-    [Route("create-app-user", Name = "CreateAppUser")]
+    [Route("create-app-user")]
     public async Task<IActionResult> PostAppUser(AppUser appUser)
     {
-        await _context.AppUsers.AddAsync(appUser);
-        await _context.SaveChangesAsync();
-        return CreatedAtRoute("GetAppUserById", new { appUserId = appUser.Id }, appUser);
+        _ = await _context.AppUsers.AddAsync(appUser);
+        _ = await _context.SaveChangesAsync();
+        return CreatedAtAction(nameof(GetAppUser), new { appUserId = appUser.Id }, appUser);
     }
 
     [HttpPut]
-    [Route("update-app-user", Name = "UpdateAppUser")]
+    [Route("update-app-user")]
     public async Task<IActionResult> PutAppUser(int appUserId, AppUser appUser)
     {
         if (appUserId != appUser.Id)
@@ -60,7 +55,7 @@ public class AppUserController : ControllerBase
 
         try
         {
-            await _context.SaveChangesAsync();
+            _ = await _context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -78,17 +73,17 @@ public class AppUserController : ControllerBase
     }
 
     [HttpDelete]
-    [Route("delete-app-user", Name = "DeleteAppUser")]
+    [Route("delete-app-user")]
     public async Task<IActionResult> DeleteAppUser(int appUserId)
     {
-        var appUser = await _context.AppUsers.FindAsync(appUserId);
+        AppUser? appUser = await _context.AppUsers.FindAsync(appUserId);
         if (appUser == null)
         {
             return NotFound();
         }
 
-        _context.AppUsers.Remove(appUser);
-        await _context.SaveChangesAsync();
+        _ = _context.AppUsers.Remove(appUser);
+        _ = await _context.SaveChangesAsync();
 
         return NoContent();
     }

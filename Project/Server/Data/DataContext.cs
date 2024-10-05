@@ -15,7 +15,7 @@ public class DataContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<AppUser>().HasData(
+        _ = modelBuilder.Entity<AppUser>().HasData(
             new AppUser { Id = 1, UserName = "john_doe" },
             new AppUser { Id = 2, UserName = "jane_smith" },
             new AppUser { Id = 3, UserName = "michael_brown" },
